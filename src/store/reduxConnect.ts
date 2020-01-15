@@ -1,8 +1,8 @@
 import { ReactNode, FC as ReactFC } from "react";
 import { connect } from "react-redux";
 
-const mapStateToProps = (state: any) => state;
+const mapStateToProps = (state: any): any => state;
 
-export default function reduxConnect(WrappedComponent: ReactNode | ReactFC | any, actions: any, state = mapStateToProps) {
+export default function reduxConnect(WrappedComponent: ReactNode | ReactFC | any, actions: any, state: any = mapStateToProps) {
     return connect(state, actions, null, { forwardRef: true })(WrappedComponent);
 };

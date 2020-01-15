@@ -1,16 +1,31 @@
 import React from 'react';
 import reduxConnect from '../../store/reduxConnect';
 import Button from '../shared/Button';
+import List from '../List';
+import { addListToBoard } from '../../actions';
+import { IList } from '../../reducers';
 
-const Board: React.FC = (props: any) => {
-    console.log(props);
+const Board: React.FC = ({ boardDetail, boardLists, addListToBoard }: any) => {
+    const onClickAddList = () => {
+        addListToBoard(boardDetail.boardId, 'Ubuntu');
+    };
     return (
-        <div>Board 
-            <Button noBorder>Click Me</Button>
-            <Button size='sm'>Click Me</Button>
-            <Button size='lg'>Click Me</Button>
+        <div>
+            <div>{boardDetail.boardName}</div>
+            <div>
+                {boardLists.map((boardList: IList) => <List key={boardList.listId} {...boardList} />)}
+                <Button onClick={onClickAddList}>Add List</Button>
+            </div>
         </div>
     );
 };
 
-export default reduxConnect(Board, null);
+function mapStateToProps(state: any) {
+    const boardDetail = state.boards[0]
+    return {
+        boardDetail,
+        boardLists: state.lists[boardDetail.boardId] || []
+    };
+}
+
+export default reduxConnect(Board, { addListToBoard }, mapStateToProps);
