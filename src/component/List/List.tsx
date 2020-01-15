@@ -1,12 +1,16 @@
 import React from 'react';
 import reduxConnect from '../../store/reduxConnect';
 import { IList, IInitialState, ICard } from '../../reducers';
-import Button from '../shared/Button';
 import AddCard from '../Card/AddCard';
 import styled from 'styled-components';
+import Card from '../Card';
+import { useDrag, useDrop } from 'react-dnd'
+import { switchListItems } from '../../actions';
 
 interface IListProps extends IList {
-    cards: Array<ICard>
+    cards: Array<ICard>,
+    boardId: string,
+    switchListItems: Function
 }
 
 const ListContainer = styled.div`
@@ -34,28 +38,36 @@ const ListTitle = styled.div`
     cursor: move;
 `;
 
-const ListItem = styled.div`
-    background-color: #fff;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(9,30,66,.25);
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 10px;
+const List: React.FC<IListProps> = ({ boardId, listId, title, cards, switchListItems }) => {
+    const [, drag, preview] = useDrag({
+        item: { listId, type: 'LIST' },
+        collect: monitor => ({
+            opacity: monitor.isDragging() ? 0.6 : 1,
+        }),
+        end: (item: any, monitor) => {
+            const dropResult = monitor.getDropResult()
+            console.log(item, dropResult);
+            if (item && dropResult && dropResult.listId !== item.listId) {
+                switchListItems(boardId, item.listId, dropResult.listId);
+            }
+        }
+    });
 
-    &:hover, &:active {
-        background-color: #f4f5f7;
-    }
-`;
 
-const List: React.FC<IListProps> = ({ listId, title, cards }) => {
+    const [, drop] = useDrop({
+        accept: 'LIST',
+        drop: () => ({ listId, title })
+    });
+
+
     return (
-        <ListContainer>
-            <ListTitle>
+        <ListContainer ref={node => preview(drop(node))}>
+            <ListTitle ref={drag}>
                 {title}
             </ListTitle>
             {
                 cards.map((card) => (
-                    <ListItem key={card.cardId}>{card.title}</ListItem>
+                    <Card key={card.cardId} {...card} />
                 ))
             }
             <AddCard listId={listId} />
@@ -69,4 +81,4 @@ function mapStateToProps(state: IInitialState, { listId }: any) {
     };
 }
 
-export default reduxConnect(List, null, mapStateToProps);
+export default reduxConnect(List, { switchListItems }, mapStateToProps);

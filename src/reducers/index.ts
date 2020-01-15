@@ -1,4 +1,4 @@
-import { FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST } from './../actions/actionConstants';
+import { FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST, SWITCH_LIST } from './../actions/actionConstants';
 import { ADD_LIST_TO_BOARD } from "../actions/actionConstants";
 
 export interface IBoard {
@@ -85,6 +85,31 @@ export default function reducer(state: IInitialState = initialState, { type, pay
                 cards: {
                     ...state.cards,
                     [listId]: listCards
+                }
+            };
+        }
+
+        case SWITCH_LIST: {
+            const { boardId, destId, sourceId } = payload;
+            const boardLists = [...state.lists[boardId]];
+            let sourceIdIndex = -1, destIdIndex = -1;
+            boardLists.forEach((listItem: IList, index: number) => {
+                if (listItem.listId === sourceId) {
+                    sourceIdIndex = index;
+                }
+                if (listItem.listId === destId) {
+                    destIdIndex = index;
+                }
+            });
+            let temp = boardLists[sourceIdIndex];
+            boardLists[sourceIdIndex] = boardLists[destIdIndex];
+            boardLists[destIdIndex] = temp;
+
+            return {
+                ...state,
+                lists: {
+                    ...state.lists,
+                    [boardId]: boardLists
                 }
             };
         }

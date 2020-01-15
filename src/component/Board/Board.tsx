@@ -4,6 +4,8 @@ import List from '../List';
 import { IList } from '../../reducers';
 import styled from 'styled-components';
 import AddList from '../List/AddList';
+import { DndProvider } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend'
 
 const BoardContainer = styled.div`
     display: flex;
@@ -15,7 +17,7 @@ const BoardHeader = styled.div`
     padding: 10px 20px;
     background-color: #0266a2;
     color: #fff;
-    ${({theme}) => theme.headerFontFamily}
+    ${({ theme }) => theme.headerFontFamily}
 `;
 
 const BoardListContainer = styled.div`
@@ -34,7 +36,11 @@ const Board: React.FC = ({ boardDetail, boardLists }: any) => {
         <BoardContainer>
             <BoardHeader>{boardDetail.boardName}</BoardHeader>
             <BoardListContainer>
-                {boardLists.map((boardList: IList) => <List key={boardList.listId} {...boardList} />)}
+                <DndProvider backend={Backend}>
+                    {boardLists.map((boardList: IList) => (
+                        <List key={boardList.listId} boardId={boardDetail.boardId} {...boardList} />
+                    ))}
+                </DndProvider>
                 <AddList boardId={boardDetail.boardId} />
             </BoardListContainer>
         </BoardContainer>

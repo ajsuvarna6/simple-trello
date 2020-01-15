@@ -1529,6 +1529,13 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
+"@types/react-dnd-html5-backend@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/react-dnd-html5-backend/-/react-dnd-html5-backend-3.0.2.tgz#f3cc8307cb9563a2896cb9fb48a09660a0e209c9"
+  integrity sha512-sLKCHGGoXrxbx3QX9Jerg51dRjeUKD+c+HL59ZTkut5GevxJFC8PxsVpcoMchBRd9X+GUyrsaBSXGteWCpMISw==
+  dependencies:
+    react-dnd-html5-backend "*"
+
 "@types/react-dnd@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/react-dnd/-/react-dnd-3.0.2.tgz#939e5a8ca5b83f847c3f64dabbe2f49a9fefb192"
@@ -8653,6 +8660,13 @@ react-dev-utils@^10.0.0:
     shell-quote "1.7.2"
     strip-ansi "5.2.0"
     text-table "0.2.0"
+
+react-dnd-html5-backend@*, react-dnd-html5-backend@^10.0.2:
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-10.0.2.tgz#15cb9d2b923f43576a136df854e288cb5969784c"
+  integrity sha512-ny17gUdInZ6PIGXdzfwPhoztRdNVVvjoJMdG80hkDBamJBeUPuNF2Wv4D3uoQJLjXssX1+i9PhBqc7EpogClwQ==
+  dependencies:
+    dnd-core "^10.0.2"
 
 react-dnd@*, react-dnd@^10.0.2:
   version "10.0.2"
