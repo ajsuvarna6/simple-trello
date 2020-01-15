@@ -4,6 +4,7 @@ import Board from '../Board';
 import { getUserDetails } from '../../helpers/apiService';
 import { IUserDetail, IInitialState } from '../../reducers';
 import { fetchUserDetails, apiInProgress } from '../../actions';
+import { Loader } from '../shared/Loader';
 
 const Dashboard: React.FC = ({ apiInProgress, fetchUserDetails }: any) => {
     const [initialDataLoaded, setInitialDataLoaded] = useState(false);
@@ -18,10 +19,9 @@ const Dashboard: React.FC = ({ apiInProgress, fetchUserDetails }: any) => {
     }, []);
     return (
         <div>
-            <div>
-                Dashboard
-            </div>
+            <div></div>
             {initialDataLoaded && <Board />}
+            {!initialDataLoaded && apiInProgress && <Loader />}
         </div>
     );
 };

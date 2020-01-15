@@ -1,22 +1,39 @@
 import React from 'react';
 import reduxConnect from '../../store/reduxConnect';
-import Button from '../shared/Button';
 import List from '../List';
-import { addListToBoard } from '../../actions';
 import { IList } from '../../reducers';
+import styled from 'styled-components';
+import AddList from '../List/AddList';
 
-const Board: React.FC = ({ boardDetail, boardLists, addListToBoard }: any) => {
-    const onClickAddList = () => {
-        addListToBoard(boardDetail.boardId, 'Ubuntu');
-    };
+const BoardContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const BoardHeader = styled.div`
+    display: flex;
+    padding: 10px 20px;
+    background-color: #0266a2;
+    color: #fff;
+    ${({theme}) => theme.headerFontFamily}
+`;
+
+const BoardListContainer = styled.div`
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 10px 20px;
+`;
+
+const Board: React.FC = ({ boardDetail, boardLists }: any) => {
+
     return (
-        <div>
-            <div>{boardDetail.boardName}</div>
-            <div>
+        <BoardContainer>
+            <BoardHeader>{boardDetail.boardName}</BoardHeader>
+            <BoardListContainer>
                 {boardLists.map((boardList: IList) => <List key={boardList.listId} {...boardList} />)}
-                <Button onClick={onClickAddList}>Add List</Button>
-            </div>
-        </div>
+                <AddList boardId={boardDetail.boardId} />
+            </BoardListContainer>
+        </BoardContainer>
     );
 };
 
@@ -28,4 +45,4 @@ function mapStateToProps(state: any) {
     };
 }
 
-export default reduxConnect(Board, { addListToBoard }, mapStateToProps);
+export default reduxConnect(Board, null, mapStateToProps);

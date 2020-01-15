@@ -1,4 +1,4 @@
-import { FETCH_USER_DETAILS, API_IN_PROGRESS } from './../actions/actionConstants';
+import { FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST } from './../actions/actionConstants';
 import { ADD_LIST_TO_BOARD } from "../actions/actionConstants";
 
 export interface IBoard {
@@ -46,6 +46,7 @@ export const initialState: IInitialState = {
 };
 
 export default function reducer(state: IInitialState = initialState, { type, payload }: {type: string, payload: any}) {
+    console.log(state, type, payload);
     switch (type) {
         case API_IN_PROGRESS: {
             return {
@@ -64,13 +65,26 @@ export default function reducer(state: IInitialState = initialState, { type, pay
 
         case ADD_LIST_TO_BOARD: {
             const { boardId, ...list } = payload;
-            const boardLists = [...state.lists[payload.boardId] || [], list];
+            const boardLists = [...state.lists[boardId] || [], list];
             
             return {
                 ...state,
                 lists: {
                     ...state.lists,
-                    [payload.boardId]: boardLists
+                    [boardId]: boardLists
+                }
+            };
+        }
+
+        case ADD_CARD_TO_LIST: {
+            const { listId, ...card } = payload;
+            const listCards = [...state.cards[listId] || [], card];
+            
+            return {
+                ...state,
+                cards: {
+                    ...state.cards,
+                    [listId]: listCards
                 }
             };
         }

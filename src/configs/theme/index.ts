@@ -4,7 +4,13 @@ export const defaultFontFamily = `
     font-size: 12px;
 `;
 
-export const bgColor = '#fff';
+export const headerFontFamily = `
+    font-family: 'Roboto';
+    font-size: 18px;
+    font-weight: 600;
+`;
+
+export const bgColor = '#0179bf';
 export const textColor = '#000';
 
 export const buttonBorderColor = 'rgba(41, 41, 41, 0.35)';

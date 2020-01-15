@@ -1,6 +1,6 @@
 import { IUserDetail } from './../reducers/index';
 import uuidv1 from 'uuid/v1';
-import { ADD_LIST_TO_BOARD, FETCH_USER_DETAILS, API_IN_PROGRESS } from './actionConstants';
+import { ADD_LIST_TO_BOARD, FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST } from './actionConstants';
 
 
 export function apiInProgress(payload: boolean) {
@@ -25,6 +25,20 @@ export function addListToBoard(boardId: string, title: string) {
             listId,
             title, 
             boardId
+        }
+    }
+}
+
+
+export function addCardToList(listId: string, title: string, description: string) {
+    const cardId = uuidv1();
+    return {
+        type: ADD_CARD_TO_LIST,
+        payload: {
+            listId,
+            title, 
+            cardId,
+            description
         }
     }
 }

@@ -43,6 +43,7 @@ export function apiService(url: string, method = 'GET', headers?: any, body?: an
         );
 }
 
+// #region Mock Area
 /**
  * temporary mock API
  */
@@ -55,6 +56,8 @@ function mockApiService(url: string, method?: string, headers?: any, body?: any)
         window.setTimeout(resolve, 1000, mockApis[url]);
     });
 }
+
+// #endregion
 
 export function getUserDetails(): Promise<any> {
     return mockApiService(APIUrls.getUserDetails);

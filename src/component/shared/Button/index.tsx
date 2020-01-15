@@ -32,10 +32,20 @@ const Button: any = styled.button`
         }
     }}
 
+    &.success {        
+        background-color: #59ac44;
+        border-color: #59ac44;
+        color: #fff;
+    }
+
     &:hover, &:active {
         color: ${({theme}) => theme.buttonActiveColor};
         background-color: ${({theme}) => theme.buttonActiveBGColor};
         cursor: pointer;
+    }
+
+    &.success:hover, .success:active {
+        background-color: #61bd4f;
     }
 `;
 
