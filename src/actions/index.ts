@@ -1,6 +1,6 @@
 import { IUserDetail } from './../reducers/index';
 import uuidv1 from 'uuid/v1';
-import { ADD_LIST_TO_BOARD, FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST, SWITCH_LIST } from './actionConstants';
+import { ADD_LIST_TO_BOARD, FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST, SWITCH_LISTS, SWITCH_CARDS } from './actionConstants';
 
 
 export function apiInProgress(payload: boolean) {
@@ -45,9 +45,21 @@ export function addCardToList(listId: string, title: string, description: string
 
 export function switchListItems(boardId: string, sourceId: string, destId: string) {
     return ({
-        type: SWITCH_LIST,
+        type: SWITCH_LISTS,
         payload: {
             boardId,
+            sourceId,
+            destId
+        }
+    });
+}
+
+
+export function switchCardItems(listId: string, sourceId: string, destId: string) {
+    return ({
+        type: SWITCH_CARDS,
+        payload: {
+            listId,
             sourceId,
             destId
         }

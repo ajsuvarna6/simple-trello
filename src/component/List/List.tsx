@@ -67,7 +67,7 @@ const List: React.FC<IListProps> = ({ boardId, listId, title, cards, switchListI
             </ListTitle>
             {
                 cards.map((card) => (
-                    <Card key={card.cardId} {...card} />
+                    <Card key={card.cardId} listId={listId} {...card} />
                 ))
             }
             <AddCard listId={listId} />

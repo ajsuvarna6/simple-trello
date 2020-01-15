@@ -2,6 +2,9 @@ import React, { Fragment, useState } from 'react';
 import styled from "styled-components";
 import { ICard } from '../../reducers';
 import Button from '../shared/Button';
+import { useDrag, useDrop } from 'react-dnd';
+import reduxConnect from '../../store/reduxConnect';
+import { switchCardItems } from '../../actions';
 
 const CardItem = styled.div`
     background-color: #fff;
@@ -58,16 +61,41 @@ const CardModalButton = styled(Button)`
 
 `;
 
-const Card: React.FC<ICard> = ({ cardId, title, description }) => {
+interface ICardProps extends ICard {
+    listId: string,
+    switchCardItems: Function
+}
+
+const Card: React.FC<ICardProps> = ({ cardId, listId, title, description, switchCardItems }) => {
     const [showModal, setShowModal] = useState(false);
 
     const toggleModal = () => {
         setShowModal(!showModal);
     }
 
+    const [, drag, preview] = useDrag({
+        item: { cardId, type: 'list-' + listId },
+        collect: monitor => ({
+            opacity: monitor.isDragging() ? 0.6 : 1,
+        }),
+        end: (item: any, monitor) => {
+            const dropResult = monitor.getDropResult()
+            console.log(item, dropResult);
+            if (item && dropResult && dropResult.cardId !== item.cardId) {
+                switchCardItems(listId, item.cardId, dropResult.cardId);
+            }
+        }
+    });
+
+
+    const [, drop] = useDrop({
+        accept: 'list-' + listId,
+        drop: () => ({ cardId, title })
+    });
+
     return (
         <Fragment>
-            <CardItem onClick={toggleModal}>{title}</CardItem>
+            <CardItem ref={node => preview(drag(drop(node)))} onClick={toggleModal}>{title}</CardItem>
             {showModal &&
                 (<CardModalContainer>
                     <CardModalContent>
@@ -87,4 +115,4 @@ const Card: React.FC<ICard> = ({ cardId, title, description }) => {
     );
 };
 
-export default Card;
+export default reduxConnect(Card, { switchCardItems });
