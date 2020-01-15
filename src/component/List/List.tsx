@@ -17,22 +17,45 @@ const ListContainer = styled.div`
     flex-direction: column;
     max-height: 100%;
     position: relative;
-    width: 272px;
+    max-width: 272px;
+    min-width: 272px;
     height: 100%;
     white-space: nowrap;
     margin-right: 10px;
     padding: 10px;
 `;
 
+const ListTitle = styled.div`
+    padding-bottom: 10px;
+    font-weight: bold;
+    font-size: 18px;
+    word-break: break-all;
+    white-space: normal;
+    cursor: move;
+`;
+
+const ListItem = styled.div`
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+
+    &:hover, &:active {
+        background-color: #f4f5f7;
+    }
+`;
+
 const List: React.FC<IListProps> = ({ listId, title, cards }) => {
     return (
         <ListContainer>
-            <div>
+            <ListTitle>
                 {title}
-            </div>
+            </ListTitle>
             {
                 cards.map((card) => (
-                    <div key={card.cardId}>{card.title}</div>
+                    <ListItem key={card.cardId}>{card.title}</ListItem>
                 ))
             }
             <AddCard listId={listId} />

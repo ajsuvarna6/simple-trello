@@ -6,7 +6,39 @@ import styled from 'styled-components';
 import reduxConnect from '../../../store/reduxConnect';
 
 const AddCardContainer = styled.div`
+    background-color: #ffffff;
+    border-radius: 3px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    position: relative;
+    padding: 5px 0;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+`;
 
+const AddCardButton = styled(Button)`
+    border: none;
+    background-color: transparent;
+    color: #5e6c84;
+    font-weight: 600;
+    font-size: 14px;
+    
+    &:hover, &:active {
+        background-color: rgba(9,30,66,.08);
+        color: #172b4d;
+    }
+`;
+
+const ButtonWrapper = styled.div`
+    padding: 5px 10px;
+    & button:last-child {
+        margin-left: 5px;
+        &:hover, &:active {
+            background-color: #ebecf0;
+            color: #000;
+        }
+    }
 `;
 
 const useCustomState = (defaultValue: any) => {
@@ -18,13 +50,16 @@ const useCustomState = (defaultValue: any) => {
 };
 
 export function AddCard({ listId, addCardToList }: any) {
-    const showAddList = useCustomState(false);
+    const showAddCard = useCustomState(false);
     const cardTitle = useCustomState('');
     const cardDescription = useCustomState('');
 
-    const onClickAddList = (displayAddList = false) => {
-        showAddList.setValue(displayAddList);
-        if (!displayAddList) {
+    const onClickAddCard = (displayAddCard = false) => {
+        if (!displayAddCard && !cardTitle.value) {
+            return;
+        }
+        showAddCard.setValue(displayAddCard);
+        if (!displayAddCard) {
             addCardToList(listId, cardTitle.value, cardDescription.value);
             cardTitle.setValue('');
             cardDescription.setValue('');
@@ -42,20 +77,27 @@ export function AddCard({ listId, addCardToList }: any) {
     const closeAddCard = () => {
         cardTitle.setValue('');
         cardDescription.setValue('');
-        showAddList.setValue(false);
+        showAddCard.setValue(false);
     };
 
     return (
         <Fragment>
-            {showAddList.value &&
+            {showAddCard.value &&
                 (<AddCardContainer>
-                    <Input value={cardTitle.value} onChange={onChangeCardTitle} />
-                    <Input value={cardDescription.value} onChange={onChangeCardDesc} />
-                    <Button className='success' onClick={() => onClickAddList(false)}>Add Card</Button>
-                    <Button noBorder className='close' onClick={closeAddCard}>X</Button>
+                    <Input placeholder='Enter a title for this card…' value={cardTitle.value} onChange={onChangeCardTitle} />
+                    <Input 
+                        noBoxShadow={true}
+                        placeholder='Enter a description for this card…' 
+                        value={cardDescription.value}
+                        onChange={onChangeCardDesc} 
+                    />
+                    <ButtonWrapper>
+                        <Button className='success' onClick={() => onClickAddCard(false)}>Add Card</Button>
+                        <Button noBorder className='close' onClick={closeAddCard}>X</Button>
+                    </ButtonWrapper>
                 </AddCardContainer>)
             }
-            {!showAddList.value && <Button onClick={() => onClickAddList(true)}>Add Card</Button>}
+            {!showAddCard.value && <AddCardButton onClick={() => onClickAddCard(true)}>+ Add Card</AddCardButton>}
         </Fragment>
     );
 }

@@ -21,7 +21,11 @@ const BoardHeader = styled.div`
 const BoardListContainer = styled.div`
     display: flex;
     flex-flow: row nowrap;
-    padding: 10px 20px;
+    padding: 10px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-right: 20px;
+    margin-left: 20px;
 `;
 
 const Board: React.FC = ({ boardDetail, boardLists }: any) => {
