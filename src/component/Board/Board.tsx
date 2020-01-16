@@ -28,6 +28,13 @@ const BoardListContainer = styled.div`
     overflow-y: hidden;
     margin-right: 20px;
     margin-left: 20px;
+
+    @media only screen and (max-width: 600px) {
+        flex-flow: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: calc(100vh - 70px);
+    }
 `;
 
 const Board: React.FC = ({ boardDetail, boardLists }: any) => {

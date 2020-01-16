@@ -1,5 +1,4 @@
-import { IUserDetail } from './../reducers/index';
-import uuidv1 from 'uuid/v1';
+import { IUserDetail } from './../reducers';
 import { ADD_LIST_TO_BOARD, FETCH_USER_DETAILS, API_IN_PROGRESS, ADD_CARD_TO_LIST, SWITCH_LISTS, SWITCH_CARDS } from './actionConstants';
 
 
@@ -17,8 +16,7 @@ export function fetchUserDetails(payload: IUserDetail) {
     }
 }
 
-export function addListToBoard(boardId: string, title: string) {
-    const listId = uuidv1();
+export function addListToBoard(boardId: string, listId: string, title: string) {
     return {
         type: ADD_LIST_TO_BOARD,
         payload: {
@@ -30,8 +28,7 @@ export function addListToBoard(boardId: string, title: string) {
 }
 
 
-export function addCardToList(listId: string, title: string, description: string) {
-    const cardId = uuidv1();
+export function addCardToList(listId: string, cardId: string, title: string, description: string) {
     return {
         type: ADD_CARD_TO_LIST,
         payload: {
