@@ -5,8 +5,13 @@ import { getUserDetails } from '../../helpers/apiService';
 import { IUserDetail, IInitialState } from '../../reducers';
 import { fetchUserDetails, apiInProgress } from '../../actions';
 import { Loader } from '../shared/Loader';
+import styled from 'styled-components';
 
-const Dashboard: React.FC = ({ apiInProgress, fetchUserDetails }: any) => {
+const PageContainer = styled.div`
+    position: relative;
+`;
+
+const Dashboard: React.FC = ({ apiInProgress, isApiInProgress, fetchUserDetails }: any) => {
     const [initialDataLoaded, setInitialDataLoaded] = useState(false);
     useEffect(() => {
         const getUserBoards = async () => {
@@ -14,21 +19,22 @@ const Dashboard: React.FC = ({ apiInProgress, fetchUserDetails }: any) => {
             const userBoards: IUserDetail = await getUserDetails();
             fetchUserDetails(userBoards);
             setInitialDataLoaded(true);
+            apiInProgress(false);
         };
         getUserBoards();
     }, []);
     return (
-        <div>
-            <div></div>
+        <PageContainer>
             {initialDataLoaded && <Board />}
-            {!initialDataLoaded && apiInProgress && <Loader />}
-        </div>
+            {isApiInProgress && <Loader />}
+        </PageContainer>
     );
 };
 
 function mapStateToProps(state: IInitialState) {
     return {
-        activeBoardId: state.activeBoardId
+        activeBoardId: state.activeBoardId,
+        isApiInProgress: state.isApiInProgress
     };
 }
 

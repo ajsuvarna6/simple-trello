@@ -33,7 +33,7 @@ export interface IUserDetail {
 };
 
 export interface IInitialState extends IUserDetail {
-    apiInProgress: boolean,
+    isApiInProgress: boolean,
     activeBoardId: string
 };
 
@@ -41,17 +41,17 @@ export const initialState: IInitialState = {
     boards: [],
     lists: {},
     cards: {},
-    apiInProgress: false,
+    isApiInProgress: false,
     activeBoardId: ''
 };
 
-export default function reducer(state: IInitialState = initialState, { type, payload }: {type: string, payload: any}) {
-    console.log(state, type, payload);
+export default function reducer(state: IInitialState = initialState, { type, payload }: {type: string, payload: any}): IInitialState {
+    // console.log(state, type, payload);
     switch (type) {
         case API_IN_PROGRESS: {
             return {
                 ...state,
-                apiInProgress: payload
+                isApiInProgress: payload
             }
         }
 

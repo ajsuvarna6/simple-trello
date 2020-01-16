@@ -1,15 +1,16 @@
 import React, { Fragment, useState } from 'react';
 import styled from "styled-components";
-import { ICard } from '../../reducers';
+import { ICard, IInitialState } from '../../reducers';
 import Button from '../shared/Button';
 import { useDrag, useDrop } from 'react-dnd';
 import reduxConnect from '../../store/reduxConnect';
-import { switchCardItems } from '../../actions';
+import { switchCardItems, apiInProgress } from '../../actions';
+import { updateSwitchUserBoardListCards } from '../../helpers/apiService';
 
 const CardItem = styled.div`
     background-color: #fff;
     border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    box-shadow: ${({theme}) => theme.boxShadow};
     cursor: pointer;
     padding: 10px;
     margin-bottom: 10px;
@@ -36,6 +37,11 @@ const CardModalContent = styled.div`
     background: #fff;
     border-radius: 4px;
     padding: 20px;
+
+    @media only screen and (max-width: 600px) {
+        width: 78%;
+        margin: calc(50vh - 150px) auto;
+    }
 `;
 
 const CardModalHeader = styled.div`
@@ -63,10 +69,13 @@ const CardModalButton = styled(Button)`
 
 interface ICardProps extends ICard {
     listId: string,
-    switchCardItems: Function
+    switchCardItems: Function,
+    isApiInProgress: boolean,
+    boardId: string,
+    apiInProgress: Function
 }
 
-const Card: React.FC<ICardProps> = ({ cardId, listId, title, description, switchCardItems }) => {
+const Card: React.FC<ICardProps> = ({ cardId, listId, boardId, title, description, switchCardItems, isApiInProgress, apiInProgress}) => {
     const [showModal, setShowModal] = useState(false);
 
     const toggleModal = () => {
@@ -78,11 +87,17 @@ const Card: React.FC<ICardProps> = ({ cardId, listId, title, description, switch
         collect: monitor => ({
             opacity: monitor.isDragging() ? 0.6 : 1,
         }),
+        canDrag: () => !isApiInProgress,
         end: (item: any, monitor) => {
             const dropResult = monitor.getDropResult()
-            console.log(item, dropResult);
             if (item && dropResult && dropResult.cardId !== item.cardId) {
-                switchCardItems(listId, item.cardId, dropResult.cardId);
+                apiInProgress(true);
+                const switchBoardListCards = async () => {
+                    await updateSwitchUserBoardListCards(boardId, listId, item.cardId, dropResult.cardId);
+                    switchCardItems(listId, item.cardId, dropResult.cardId);
+                    apiInProgress(false);
+                };
+                switchBoardListCards();
             }
         }
     });
@@ -103,7 +118,7 @@ const Card: React.FC<ICardProps> = ({ cardId, listId, title, description, switch
                             <CardTitle>
                                 {title}
                             </CardTitle>
-                            <CardModalButton noBorder onClick={toggleModal}>X</CardModalButton>
+                            <CardModalButton className='close' noBorder onClick={toggleModal}>&times;</CardModalButton>
                         </CardModalHeader>
                         <CardModalBody>
                             {description}
@@ -115,4 +130,8 @@ const Card: React.FC<ICardProps> = ({ cardId, listId, title, description, switch
     );
 };
 
-export default reduxConnect(Card, { switchCardItems });
+const mapStateToProps = ({ isApiInProgress }: IInitialState) => ({
+    isApiInProgress
+});
+
+export default reduxConnect(Card, { switchCardItems, apiInProgress }, mapStateToProps);

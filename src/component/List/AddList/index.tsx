@@ -1,36 +1,35 @@
 import React, { Fragment, useState } from 'react';
 import Button from '../../shared/Button';
 import reduxConnect from '../../../store/reduxConnect';
-import { addListToBoard } from '../../../actions';
+import { addListToBoard, apiInProgress } from '../../../actions';
 import styled from 'styled-components';
 import Input from '../../shared/Input';
-// import { IBoard } from '../../../reducers';
+import { updateUserBoardWithList } from '../../../helpers/apiService';
+import uuidv1 from 'uuid/v1';
+import { IInitialState } from '../../../reducers';
 
 const AddListContainer = styled.div`
-    background-color: #ebecf0;
+    background-color: ${({theme}) => theme.listBGColor};
     border-radius: 3px;
     box-sizing: border-box;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
     flex-direction: column;
     max-height: 100%;
     position: relative;
-    max-width: 272px;
-    min-width: 272px;
+    ${({theme}) => theme.listBoxWidth }
     height: 100%;
     white-space: nowrap;
     margin-right: 10px;
     padding: 10px;
+    @media only screen and (max-width: 600px) {
+        max-width: 100%;
+        margin-right: 0;
+    }
 `;
 
 const AddListButton = styled.button`
     background-color: rgba(255, 255, 255, 0.24);
     cursor: pointer;
-    /* background-color: #ebecf0; */
     border-radius: 3px;
     border: none;
     height: auto;
@@ -38,8 +37,7 @@ const AddListButton = styled.button`
     padding: 4px;
     transition: background 85ms ease-in,opacity 40ms ease-in,border-color 85ms ease-in;
     color: #fff;
-    max-width: 272px;
-    min-width: 272px;
+    ${({theme}) => theme.listBoxWidth }
     height: 40px;
     font-size: 14px;
     font-weight: 600;
@@ -48,10 +46,14 @@ const AddListButton = styled.button`
         background-color: rgba(255, 255, 255, 0.32);
         cursor: pointer;
     }
+    @media only screen and (max-width: 600px) {
+        max-width: 100%;
+    }
 `;
 
 const ButtonWrapper = styled.div`
-    padding: 5px 10px;
+    padding: 5px 0;
+    display: flex;
 `;
 
 const CloseButton = styled(Button)`
@@ -63,9 +65,16 @@ const CloseButton = styled(Button)`
     }
 `;
 
-export function AddList({ boardId, addListToBoard }: any) {
-    const [showAddList, setShowAddList] = useState(false);
-    const [listTitle, setListTitle] = useState('');
+interface IAddListProps {
+    boardId: string,
+    addListToBoard: Function,
+    apiInProgress: Function,
+    isApiInProgress: boolean
+};
+
+export function AddList({ boardId, addListToBoard, apiInProgress, isApiInProgress }: IAddListProps) {
+    const [showAddList, setShowAddList]: [boolean, Function] = useState(false);
+    const [listTitle, setListTitle]: [string, Function] = useState('');
 
     const onClickAddList = (displayAddList = false) => {
         if (!displayAddList && !listTitle) {
@@ -73,8 +82,15 @@ export function AddList({ boardId, addListToBoard }: any) {
         }
         setShowAddList(displayAddList);
         if (!displayAddList) {
-            addListToBoard(boardId, listTitle);
-            setListTitle('');
+            apiInProgress(true);
+            const listId = uuidv1();
+            const updateBoardWithList = async () => {
+                await updateUserBoardWithList(boardId, { title: listTitle, listId });
+                addListToBoard(boardId, listId, listTitle);
+                setListTitle('');
+                apiInProgress(false);
+            };
+            updateBoardWithList();
         }
     };
 
@@ -93,14 +109,18 @@ export function AddList({ boardId, addListToBoard }: any) {
                 (<AddListContainer>
                     <Input placeholder='Enter list title...' type='text' value={listTitle} onChange={onChangeListTitle} />
                     <ButtonWrapper>
-                        <Button className='success' onClick={() => onClickAddList(false)}>Add List</Button>
-                        <CloseButton noBorder className='close' onClick={closeAddList}>X</CloseButton>
+                        <Button disabled={isApiInProgress} className='success' onClick={() => onClickAddList(false)}>Add List</Button>
+                        <CloseButton noBorder className='close' onClick={closeAddList}>&times;</CloseButton>
                     </ButtonWrapper>
                 </AddListContainer>)
             }
-            {!showAddList && <AddListButton onClick={() => onClickAddList(true)}>+ Add List</AddListButton>}
+            {!showAddList && <AddListButton disabled={isApiInProgress} onClick={() => onClickAddList(true)}>+ Add List</AddListButton>}
         </Fragment>
     );
 };
 
-export default reduxConnect(AddList, { addListToBoard })
+const mapStateToProps = ({ isApiInProgress }: IInitialState) => ({
+    isApiInProgress
+});
+
+export default reduxConnect(AddList, { addListToBoard, apiInProgress }, mapStateToProps)

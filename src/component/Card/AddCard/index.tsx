@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import Input from '../../shared/Input';
 import Button from '../../shared/Button';
-import { addCardToList } from '../../../actions';
+import { addCardToList, apiInProgress } from '../../../actions';
 import styled from 'styled-components';
 import reduxConnect from '../../../store/reduxConnect';
+import { updateUserBoardListWithCard } from '../../../helpers/apiService';
+import uuidv1 from 'uuid/v1';
 
 const AddCardContainer = styled.div`
     background-color: #ffffff;
@@ -14,7 +16,7 @@ const AddCardContainer = styled.div`
     max-height: 100%;
     position: relative;
     padding: 5px 0;
-    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    box-shadow: ${({ theme }) => theme.boxShadow};
 `;
 
 const AddCardButton = styled(Button)`
@@ -32,10 +34,11 @@ const AddCardButton = styled(Button)`
 
 const ButtonWrapper = styled.div`
     padding: 5px 10px;
+    display: flex;
     & button:last-child {
         margin-left: 5px;
         &:hover, &:active {
-            background-color: #ebecf0;
+            background-color: ${({theme}) => theme.listBGColor};
             color: #000;
         }
     }
@@ -49,7 +52,7 @@ const useCustomState = (defaultValue: any) => {
     };
 };
 
-export function AddCard({ listId, addCardToList }: any) {
+export function AddCard({ boardId, listId, addCardToList, apiInProgress, isApiInProgress }: any) {
     const showAddCard = useCustomState(false);
     const cardTitle = useCustomState('');
     const cardDescription = useCustomState('');
@@ -60,9 +63,18 @@ export function AddCard({ listId, addCardToList }: any) {
         }
         showAddCard.setValue(displayAddCard);
         if (!displayAddCard) {
-            addCardToList(listId, cardTitle.value, cardDescription.value);
-            cardTitle.setValue('');
-            cardDescription.setValue('');
+            apiInProgress(true);
+            const cardId = uuidv1();
+            const updateBoardBoardWithCard = async () => {
+                await updateUserBoardListWithCard(boardId, boardId, {
+                    title: cardTitle.value, description: cardDescription.value, cardId
+                });
+                addCardToList(listId, cardId, cardTitle.value, cardDescription.value);
+                cardTitle.setValue('');
+                cardDescription.setValue('');
+                apiInProgress(false);
+            };
+            updateBoardBoardWithCard();
         }
     };
 
@@ -84,22 +96,41 @@ export function AddCard({ listId, addCardToList }: any) {
         <Fragment>
             {showAddCard.value &&
                 (<AddCardContainer>
-                    <Input placeholder='Enter a title for this card…' value={cardTitle.value} onChange={onChangeCardTitle} />
-                    <Input 
+                    <Input
+                        disabled={isApiInProgress}
+                        placeholder='Enter a title for this card…'
+                        value={cardTitle.value}
+                        onChange={onChangeCardTitle}
+                    />
+                    <Input
+                        disabled={isApiInProgress}
                         noBoxShadow={true}
-                        placeholder='Enter a description for this card…' 
+                        placeholder='Enter a description for this card…'
                         value={cardDescription.value}
-                        onChange={onChangeCardDesc} 
+                        onChange={onChangeCardDesc}
                     />
                     <ButtonWrapper>
-                        <Button className='success' onClick={() => onClickAddCard(false)}>Add Card</Button>
-                        <Button noBorder className='close' onClick={closeAddCard}>X</Button>
+                        <Button
+                            disabled={isApiInProgress}
+                            className='success'
+                            onClick={() => onClickAddCard(false)}
+                        >
+                            Add Card
+                        </Button>
+                        <Button
+                            disabled={isApiInProgress}
+                            noBorder
+                            className='close'
+                            onClick={closeAddCard}
+                        >
+                            &times;
+                        </Button>
                     </ButtonWrapper>
                 </AddCardContainer>)
             }
-            {!showAddCard.value && <AddCardButton onClick={() => onClickAddCard(true)}>+ Add Card</AddCardButton>}
+            {!showAddCard.value && <AddCardButton disabled={isApiInProgress} onClick={() => onClickAddCard(true)}>+ Add Card</AddCardButton>}
         </Fragment>
     );
 }
 
-export default reduxConnect(AddCard, { addCardToList });
+export default reduxConnect(AddCard, { addCardToList, apiInProgress });

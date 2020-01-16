@@ -47,6 +47,11 @@ const Button: any = styled.button`
     &.success:hover, .success:active {
         background-color: #61bd4f;
     }
+
+    &.close {
+        font-size: 24px;
+        padding: 2px 12px;
+    }
 `;
 
 export default Button;
