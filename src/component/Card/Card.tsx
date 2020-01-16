@@ -33,7 +33,7 @@ const CardModalContainer = styled.div`
 const CardModalContent = styled.div`
     width: 380px;
     min-height: 200px;
-    margin: 20% auto;
+    margin: calc(50vh - 200px) auto;
     background: #fff;
     border-radius: 4px;
     padding: 20px;
