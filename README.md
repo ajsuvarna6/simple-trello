@@ -1,5 +1,7 @@
 This is a Personal Simple Trello Version of the App.
 
+Demo URL: https://my-simple-trello.netlify.com/
+
 ## Available Scripts
 
 In the project directory, you can run:
